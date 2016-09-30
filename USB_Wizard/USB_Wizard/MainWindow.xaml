@@ -5,9 +5,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:USB_Wizard"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
-    <Grid>
-        <Button x:Name="button" Content="Button" HorizontalAlignment="Left" Margin="100,155,0,0" VerticalAlignment="Top" Width="75"/>
-
+        Title="USB_Wizard" Height="604.53" Width="854.6">
+    <Grid Background="#FF5A5656">
+        <Grid HorizontalAlignment="Left" Height="502" Margin="624,73,0,0" VerticalAlignment="Top" Width="224" Background="#FF3D3B3B"/>
+        <Label x:Name="USB_Information" Content="USB Information" Foreground="White" FontSize="18"  HorizontalAlignment="Left" Height="36" Margin="668,83,0,0" VerticalAlignment="Top" Width="144"/>
+        <Grid HorizontalAlignment="Left" Height="73" VerticalAlignment="Top" Width="848" Background="#FF232323">
+            <Label x:Name="About" Content="ver 1.0.0  Mady By STB" FontSize="10" Foreground="White" HorizontalAlignment="Left" Height="23" Margin="708,50,0,0" VerticalAlignment="Top" Width="140"/>
+        </Grid>
+        <Label x:Name="label" FontSize="34" Foreground="White" Content="USB-Wizard" HorizontalAlignment="Left" Height="53" Margin="9.2,9.2,0,0" VerticalAlignment="Top" Width="214" Background="#FF252424"/>
     </Grid>
 </Window>
