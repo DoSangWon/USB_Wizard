@@ -24,5 +24,10 @@ namespace USB_Wizard
         {
             InitializeComponent();
         }
+
+        private void dataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
     }
 }
