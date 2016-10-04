@@ -6,22 +6,34 @@
         xmlns:local="clr-namespace:USB_Wizard"
         mc:Ignorable="d"
         Title="USB_Wizard (USB Encrypt Program)" Height="604.53" Width="854.6">
-    <Grid Background="#FF5A5656">
-        <Grid HorizontalAlignment="Left" Height="502" Margin="602,73,0,0" VerticalAlignment="Top" Width="246" Background="#FF3D3B3B"/>
+    <Grid Background="#FF5A5656" Margin="0,0,0,0.2">
+        <Grid HorizontalAlignment="Left" Height="502" Margin="602,73,0,0" VerticalAlignment="Top" Width="246" Background="#FF3D3B3B">
+            <Button x:Name="button" Content="Button" HorizontalAlignment="Left" Height="21" Margin="72,461,0,0" VerticalAlignment="Top" Width="112" Click="button_Click"/>
+        </Grid>
         <Label x:Name="USB_Information" Content="USB Information" Foreground="White" FontSize="18"  HorizontalAlignment="Left" Height="36" Margin="654,90,0,0" VerticalAlignment="Top" Width="144"/>
         <Grid HorizontalAlignment="Left" Height="73" VerticalAlignment="Top" Width="848" Background="#FF232323">
             <GroupBox Margin="642,137,42,-125" FontSize="10" Foreground="#FFFDF9F9">
                 <GroupBox.Header>
                     USB SELECT
                 </GroupBox.Header>
+                <ComboBox x:Name="lst_ComPort" HorizontalAlignment="Left" VerticalAlignment="Top" Width="132" Height="20" Margin="10,10,0,0" SelectionChanged="lst_ComPort_SelectionChanged"/>
             </GroupBox>
             <Label x:Name="About" Content="ver 1.0.0  Made By STB" FontSize="10" Foreground="White" HorizontalAlignment="Left" Height="23" Margin="708,50,0,0" VerticalAlignment="Top" Width="140"/>
-            <GroupBox Margin="617,203,13,-449" FontSize="10" Foreground="#FFFDF9F9">
+            <GroupBox Margin="616,203,14,-449" FontSize="10" Foreground="#FFFDF9F9">
                 <GroupBox.Header>USB Info</GroupBox.Header>
+                <ProgressBar x:Name="pBarSize" HorizontalAlignment="Left" Height="21" Margin="10,139,0,0" VerticalAlignment="Top" Width="188" ValueChanged="pBarSize_ValueChanged"/>
 
             </GroupBox>
 
         </Grid>
         <Label x:Name="label" FontSize="34" Foreground="White" Content="USB-Wizard" HorizontalAlignment="Left" Height="53" Margin="9.2,9.2,0,0" VerticalAlignment="Top" Width="214" Background="#FF252424"/>
+        <TextBox x:Name="tStatusbox" HorizontalAlignment="Left" Height="21" Margin="0,544,0,0" TextWrapping="Wrap" Text="현재 상태" VerticalAlignment="Top" Width="602"/>
+        <Label x:Name="label1" Content="Name : " Foreground="White" HorizontalAlignment="Left" Height="26" Margin="634,244,0,0" VerticalAlignment="Top" Width="58"/>
+        <Label x:Name="tName" Content="" Foreground="Aqua" HorizontalAlignment="Left" Height="26" Margin="692,244,0,0" VerticalAlignment="Top" Width="65"/>
+        <Label x:Name="label1_Copy" Content="Format : " Foreground="White" HorizontalAlignment="Left" Height="26" Margin="634,270,0,0" VerticalAlignment="Top" Width="58"/>
+        <Label x:Name="label1_Copy1" Content="Type : " Foreground="White" HorizontalAlignment="Left" Height="26" Margin="634,296,0,0" VerticalAlignment="Top" Width="58"/>
+        <Label x:Name="tFormat" Content="" Foreground="Aqua" HorizontalAlignment="Left" Height="26" Margin="692,270,0,0" VerticalAlignment="Top" Width="65"/>
+        <Label x:Name="tType" Content="" Foreground="Aqua" HorizontalAlignment="Left" Height="26" Margin="692,296,0,0" VerticalAlignment="Top" Width="106"/>
+        <Label x:Name="label1_Copy2" Content="Size" Foreground="White" HorizontalAlignment="Left" Height="26" Margin="634,327,0,0" VerticalAlignment="Top" Width="58"/>
     </Grid>
 </Window>

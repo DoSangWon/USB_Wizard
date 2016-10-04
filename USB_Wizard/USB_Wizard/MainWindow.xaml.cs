@@ -1,45 +1,100 @@
-﻿
-using Lenovo.Common.Devices;
-using System;
-using System.IO.Ports;
-using System.Runtime.InteropServices;
+﻿using System;
 using System.Windows;
-using System.Windows.Interop;
+using System.IO.Ports;
 using System.Windows.Threading;
+using System.Windows.Interop;
+using System.Runtime.InteropServices;
 
 namespace USB_Wizard
 {
     /// <summary>
     /// MainWindow.xaml에 대한 상호 작용 논리
     /// </summary>
-        public partial class MainWindow : Window
+    public partial class MainWindow : Window
+    {
+       public MainWindow()
         {
-        UsbDetector usbDetector;
-        public MainWindow()
-       {
-                InitializeComponent();
-                usbDetector = new UsbDetector();
-                usbDetector.StateChanged += new UsbStateChangedEventHandler(usbDetector_StateChanged);
-
-                this.Loaded += new RoutedEventHandler(MainWindow_Loaded);
+            InitializeComponent();
         }
-        void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        protected override void OnSourceInitialized(EventArgs e)
         {
-            WindowInteropHelper interop = new WindowInteropHelper(this);
-            HwndSource hwndSource = HwndSource.FromHwnd(interop.Handle);
-            HwndSourceHook hool = new HwndSourceHook(usbDetector.HwndHandler);
-            hwndSource.AddHook(hool); ;
-            usbDetector.RegisterDeviceNotification(interop.Handle);
+            base.OnSourceInitialized(e);
+            HwndSource source = PresentationSource.FromVisual(this) as HwndSource;
+            source.AddHook(WndProc);
         }
-
-        void usbDetector_StateChanged(bool arrival)
+        IntPtr WndProc(IntPtr hWnd, int nMsg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
-            if (arrival)
-                MessageBox.Show("USB가 연결되었습니다.");
-            else
-                MessageBox.Show("USB가 제거되었습니다.");
+            UInt32 WM_DEVICECHANGE = 0x0219;
+            UInt32 DBT_DEVTUP_VOLUME = 0x02;
+            UInt32 DBT_DEVICEARRIVAL = 0x8000;
+            UInt32 DBT_DEVICEREMOVECOMPLETE = 0x8004;
+
+            //디바이스 연결시
+            if ((nMsg == WM_DEVICECHANGE) && (wParam.ToInt32() == DBT_DEVICEARRIVAL))
+            {
+                int devType = Marshal.ReadInt32(lParam, 4);
+
+                if (devType == DBT_DEVTUP_VOLUME)
+                {
+                    MessageBox.Show("USB가 삽입 되었습니다.");
+                    RefreshDevice();
+                }
+            }
+
+            //디바이스 연결 해제시...
+            if ((nMsg == WM_DEVICECHANGE) && (wParam.ToInt32() == DBT_DEVICEREMOVECOMPLETE))
+            {
+                int devType = Marshal.ReadInt32(lParam, 4);
+                if (devType == DBT_DEVTUP_VOLUME)
+                {
+                
+                    MessageBox.Show("USB가 제거 되었습니다.");
+                    RefreshDevice();
+                }
+            }
+
+            return IntPtr.Zero;
+        }
+        public void RefreshDevice()
+        {
+            lst_ComPort.Items.Clear();
+            tName.Content = "";
+            tFormat.Content = "";
+            tType.Content = "";
+            pBarSize.Value = 0;
+            string[] ls_drivers = System.IO.Directory.GetLogicalDrives();
+            foreach (string device in ls_drivers)
+            {
+                System.IO.DriveInfo dr = new System.IO.DriveInfo(device);
+                if (dr.DriveType == System.IO.DriveType.Removable) //제거 가능한 타입이라면
+                {
+                    lst_ComPort.Items.Add(device);
+                    tName.Content = dr.Name+Environment.NewLine;
+                    tFormat.Content = dr.DriveFormat + Environment.NewLine;
+                    tType.Content = dr.DriveType + Environment.NewLine;
+                    pBarSize.Maximum = dr.TotalSize;
+                    pBarSize.Value = dr.AvailableFreeSpace;
+                    // textBox1.AppendText("총 size : " + Convert.ToString(dr.TotalSize) + Environment.NewLine);
+                    //textBox1.AppendText("남은 size : " + Convert.ToString(dr.AvailableFreeSpace) + Environment.NewLine);
+                    // textBox1.AppendText("포멧 : " + Convert.ToString(dr.DriveFormat) + Environment.NewLine);
+                    //textBox1.AppendText("타입 : " + Convert.ToString(dr.DriveType) + Environment.NewLine);
+
+                }
+            }
+        }
+        private void button_Click(object sender, RoutedEventArgs e)
+        {
+            
         }
 
+        private void lst_ComPort_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+
+        }
+
+        private void pBarSize_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+
+        }
     }
-    }
-
+}
