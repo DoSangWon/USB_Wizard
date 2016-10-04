@@ -18,7 +18,7 @@
                 </GroupBox.Header>
                 <ComboBox x:Name="lst_ComPort" HorizontalAlignment="Left" VerticalAlignment="Top" Width="132" Height="20" Margin="10,10,0,0" SelectionChanged="lst_ComPort_SelectionChanged"/>
             </GroupBox>
-            <Label x:Name="About" Content="ver 1.0.0  Made By STB" FontSize="10" Foreground="White" HorizontalAlignment="Left" Height="23" Margin="708,50,0,0" VerticalAlignment="Top" Width="140"/>
+            <Label x:Name="About" Content="ver 1.1.0  Made By STB" FontSize="10" Foreground="White" HorizontalAlignment="Left" Height="23" Margin="708,50,0,0" VerticalAlignment="Top" Width="140"/>
             <GroupBox Margin="616,203,14,-449" FontSize="10" Foreground="#FFFDF9F9">
                 <GroupBox.Header>USB Info</GroupBox.Header>
                 <ProgressBar x:Name="pBarSize" HorizontalAlignment="Left" Height="21" Margin="10,139,0,0" VerticalAlignment="Top" Width="188" ValueChanged="pBarSize_ValueChanged"/>
@@ -27,7 +27,6 @@
 
         </Grid>
         <Label x:Name="label" FontSize="34" Foreground="White" Content="USB-Wizard" HorizontalAlignment="Left" Height="53" Margin="9.2,9.2,0,0" VerticalAlignment="Top" Width="214" Background="#FF252424"/>
-        <TextBox x:Name="tStatusbox" HorizontalAlignment="Left" Height="21" Margin="0,544,0,0" TextWrapping="Wrap" Text="현재 상태" VerticalAlignment="Top" Width="602"/>
         <Label x:Name="label1" Content="Name : " Foreground="White" HorizontalAlignment="Left" Height="26" Margin="634,244,0,0" VerticalAlignment="Top" Width="58"/>
         <Label x:Name="tName" Content="" Foreground="Aqua" HorizontalAlignment="Left" Height="26" Margin="692,244,0,0" VerticalAlignment="Top" Width="65"/>
         <Label x:Name="label1_Copy" Content="Format : " Foreground="White" HorizontalAlignment="Left" Height="26" Margin="634,270,0,0" VerticalAlignment="Top" Width="58"/>

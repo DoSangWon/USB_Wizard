@@ -4,6 +4,7 @@ using System.IO.Ports;
 using System.Windows.Threading;
 using System.Windows.Interop;
 using System.Runtime.InteropServices;
+using System.Windows.Controls;
 
 namespace USB_Wizard
 {
@@ -55,25 +56,32 @@ namespace USB_Wizard
 
             return IntPtr.Zero;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public void RefreshDevice()
         {
-            lst_ComPort.Items.Clear();
-            tName.Content = "";
+           lst_ComPort.Items.Clear();
+           /* tName.Content = "";
             tFormat.Content = "";
             tType.Content = "";
-            pBarSize.Value = 0;
+            pBarSize.Value = 0;*/
             string[] ls_drivers = System.IO.Directory.GetLogicalDrives();
             foreach (string device in ls_drivers)
             {
                 System.IO.DriveInfo dr = new System.IO.DriveInfo(device);
                 if (dr.DriveType == System.IO.DriveType.Removable) //제거 가능한 타입이라면
                 {
+                   
                     lst_ComPort.Items.Add(device);
-                    tName.Content = dr.Name+Environment.NewLine;
-                    tFormat.Content = dr.DriveFormat + Environment.NewLine;
-                    tType.Content = dr.DriveType + Environment.NewLine;
-                    pBarSize.Maximum = dr.TotalSize;
-                    pBarSize.Value = dr.AvailableFreeSpace;
+                    lst_ComPort.SelectedIndex = 0;
+                    
+                   tName.Content = dr.Name+Environment.NewLine;
+                   tFormat.Content = dr.DriveFormat + Environment.NewLine;
+                   tType.Content = dr.DriveType + Environment.NewLine;
+                   pBarSize.Maximum = dr.TotalSize;
+                   pBarSize.Value = dr.AvailableFreeSpace;
+
                     // textBox1.AppendText("총 size : " + Convert.ToString(dr.TotalSize) + Environment.NewLine);
                     //textBox1.AppendText("남은 size : " + Convert.ToString(dr.AvailableFreeSpace) + Environment.NewLine);
                     // textBox1.AppendText("포멧 : " + Convert.ToString(dr.DriveFormat) + Environment.NewLine);
@@ -87,10 +95,16 @@ namespace USB_Wizard
             
         }
 
-        private void lst_ComPort_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        private void lst_ComPort_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-
+            if (lst_ComPort.SelectedIndex >= 0)
+            {
+                itemSelected = lst_ComPort.SelectedItem as string;
+                
+            }
         }
+        private string itemSelected;
+
 
         private void pBarSize_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
