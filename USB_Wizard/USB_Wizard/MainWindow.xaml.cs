@@ -20,7 +20,7 @@ namespace USB_Wizard
        public MainWindow()
         {
             InitializeComponent();
-        
+            
             
 
         }
@@ -144,7 +144,7 @@ namespace USB_Wizard
                                 // 파일 이름 출력
 
 
-                                listView1.Items.Add(new MyItem {ID=item.Name, Name=item.FullName});
+                                listView1.Items.Add(new MyItem {ID=item.Name, Name=item.FullName});//리스트에 파일명과 Full 경로 출력
 
                                 // 파일 타입 (확장자) 출력
 
@@ -172,10 +172,11 @@ namespace USB_Wizard
 
         }
         
-        private void listView1_SelectionChanged(object sender, SelectionChangedEventArgs e)
+       
+
+        private void btnEncrypt_Click(object sender, RoutedEventArgs e)
         {
             
-
         }
     }
 }
