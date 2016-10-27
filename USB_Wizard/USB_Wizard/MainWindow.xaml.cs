@@ -17,9 +17,16 @@ namespace USB_Wizard
     /// </summary>
     public partial class MainWindow : Window
     {
+        public static string key; //password
+
        public MainWindow()
         {
             InitializeComponent();
+            MessageBox.Show("암호화&복호화에 적용될 Password를 입력하여 주십시오.");
+            passworddlg dlg = new passworddlg("패스워드를 입력하여 주십시오.");
+            dlg.ShowDialog();
+            
+
             
             
 
@@ -30,6 +37,7 @@ namespace USB_Wizard
             public string ID { get; set; }
 
             public string Name { get; set; }
+           
         }
         protected override void OnSourceInitialized(EventArgs e)
         {
@@ -176,7 +184,16 @@ namespace USB_Wizard
 
         private void btnEncrypt_Click(object sender, RoutedEventArgs e)
         {
-            
+            foreach(var list in listView1.SelectedItems)
+            {
+                if(list == null)
+                {
+                    return;
+                }
+                var list2 = list as MyItem;
+                MessageBox.Show(list2.ID);
+                
+            }
         }
     }
 }

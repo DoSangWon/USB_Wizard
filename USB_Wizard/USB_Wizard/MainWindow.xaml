@@ -40,18 +40,11 @@
               Name="listView1" 
               VerticalAlignment="Top" 
               Width="541"
-              ItemsSource="{Binding}"
+              ItemsSource="{Binding col}"
               IsSynchronizedWithCurrentItem="True" Margin="24,125,0,0" Height="384">
             <ListView.View>
                 <GridView>
                     <GridView.Columns>
-                        <GridViewColumn Header="선택">
-                            <GridViewColumn.CellTemplate>
-                                <DataTemplate>
-                                    <CheckBox Tag="{Binding ID}"/>
-                                </DataTemplate>
-                            </GridViewColumn.CellTemplate>
-                        </GridViewColumn>
                         <GridViewColumn DisplayMemberBinding="{Binding ID}" Header="파일명" />
                         <GridViewColumn DisplayMemberBinding="{Binding Name}" Header="위치" />
                     </GridView.Columns>
