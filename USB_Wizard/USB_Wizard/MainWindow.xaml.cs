@@ -17,7 +17,7 @@ namespace USB_Wizard
     /// </summary>
     public partial class MainWindow : Window
     {
-        public static string key; //password 이런 시발 
+        public static string key; //password 이런 시발 dasdasdas
 
        public MainWindow()
         {
