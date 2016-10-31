@@ -228,9 +228,11 @@ namespace USB_Wizard
                     string enfile = path.Substring(0, path.LastIndexOf("."));
                     string ext = path.Substring(path.LastIndexOf("."));
 
-                    String str = AES.AESEncrypt256(path, enfile + "(암호화)" + ext, key);
+                    String str = AES.AESEncrypt256(path, enfile +"(암호화)"+ext, key);//암호화 확장자 지정
+
                     Log(filename, "암호화 성공");
-                    MessageBox.Show("암호화 된 문자열 : " + str);
+                    MessageBox.Show("암호화가 완료되었습니다.");
+                    //MessageBox.Show("암호화 된 문자열 : " + str);
 
                 }
                 else
@@ -254,7 +256,7 @@ namespace USB_Wizard
                     return;
                 }
                 var list2 = list as MyItem;
-                MessageBox.Show(list2.ID);
+                MessageBox.Show(list2.ID+"를 복호화 합니다.");
 
                 string filename = list2.ID;
 
@@ -275,7 +277,8 @@ namespace USB_Wizard
 
                     String str = AES.AESDecrypt256(enfile + ext, enfile + "(복호화)" + ext, key);
                     Log(filename, "복호화 성공");
-                    MessageBox.Show("복호화 된 문자열 : " + str);
+                    MessageBox.Show("복호화가 완료되었습니다.");
+                    //MessageBox.Show("복호화 된 문자열 : " + str);
                     
                 }
                 else
@@ -293,8 +296,8 @@ namespace USB_Wizard
             //AES_256 암호화
             public static String AESEncrypt256(string sInputFilename, string sOutputFilename, String key)
             {
-                string path = @"F:\7\8.txt";
-                string path2 = @"F:\7\9.txt";
+                //string path = @"F:\7\8.txt";
+                //string path2 = @"F:\7\9.txt";
                 FileStream fsInput = new FileStream(sInputFilename,
                FileMode.Open,
                FileAccess.Read);
@@ -306,7 +309,7 @@ namespace USB_Wizard
                 StreamWriter sw = new StreamWriter(fsEncrypted);
                 StreamReader sr = new StreamReader(fsInput);
                 string str = sr.ReadToEnd();
-                MessageBox.Show(key);
+                //MessageBox.Show(key);
 
                 RijndaelManaged aes = new RijndaelManaged();
                 aes.KeySize = 256;
@@ -360,8 +363,8 @@ namespace USB_Wizard
             //AES_256 복호화
             public static String AESDecrypt256(string sInputFilename, string sOutputFilename, String key)
             {
-                string path = @"F:\7\9.txt";
-                string path2 = @"F:\7\10.txt";
+               // string path = @"F:\7\9.txt";
+                //string path2 = @"F:\7\10.txt";
                 FileStream fsInput = new FileStream(sInputFilename,
                FileMode.Open,
                FileAccess.Read);
@@ -380,12 +383,12 @@ namespace USB_Wizard
                 aes.BlockSize = 128;
                 aes.Mode = CipherMode.CBC;
                 aes.Padding = PaddingMode.PKCS7;
-                String md5 = CreateMD5(key);
+                String md5 = CreateMD5(key); //MD5 해시화
                 aes.Key = Encoding.UTF8.GetBytes(md5);
                 aes.IV = new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
                 //String md5 = CreateMD5("aaaaa");
-                MessageBox.Show(md5);
+               // MessageBox.Show(md5);
 
                 var decrypt = aes.CreateDecryptor();
                 byte[] xBuff = null;
@@ -437,8 +440,8 @@ namespace USB_Wizard
 
             string FilePath = dir + @"Logs\Log" + DateTime.Today.ToString("yyyyMMdd") + ".log";
             string DirPath = dir + @"Logs";
-            MessageBox.Show(FilePath);
-            MessageBox.Show(DirPath);
+           // MessageBox.Show(FilePath);
+            //MessageBox.Show(DirPath);
 
 
             string temp;
@@ -463,7 +466,7 @@ namespace USB_Wizard
                 {
                     using (StreamWriter sw = File.AppendText(FilePath))
                     {
-                        MessageBox.Show("dddd" + filename);
+                        //MessageBox.Show("dddd" + filename);
                         temp = string.Format("[{0}] : {1}", GetDateTime(), filename + " " + str);
                         sw.WriteLine(temp);
                         sw.Close();
