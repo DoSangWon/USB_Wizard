@@ -21,9 +21,7 @@ namespace USB_Wizard
     /// </summary>
     public partial class MainWindow : Window
     {
-        //public static string key; //password
-        public static string dir;
-        //public static string filename;
+        public static string key; //password
 
         public MainWindow()
         {
