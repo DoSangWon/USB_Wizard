@@ -55,7 +55,7 @@
 
 
         <Button x:Name="btnEncrypt" Content="암호화" HorizontalAlignment="Left" Height="29" Margin="109,530,0,0" VerticalAlignment="Top" Width="114" Click="btnEncrypt_Click"/>
-        <Button x:Name="btnDecrypt" Content="복호화" HorizontalAlignment="Left" Height="29" Margin="323,530,0,0" VerticalAlignment="Top" Width="116"/>
+        <Button x:Name="btnDecrypt" Content="복호화" HorizontalAlignment="Left" Height="29" Margin="323,530,0,0" VerticalAlignment="Top" Width="116" Click="btnDecrypt_Click"/>
         <Label x:Name="label2" Content="* 폴더(Directory)는 리스트에 나타나지 않습니다." Foreground="Red" HorizontalAlignment="Left" Height="26" Margin="49,78,0,0" VerticalAlignment="Top" Width="414"/>
     </Grid>
 </Window>

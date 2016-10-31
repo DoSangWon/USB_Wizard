@@ -28,6 +28,7 @@ namespace USB_Wizard
         private void btnDialogOk_Click(object sender, RoutedEventArgs e)
         {
             this.DialogResult = true;
+
             
         }
 
