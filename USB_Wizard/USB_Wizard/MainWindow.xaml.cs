@@ -28,7 +28,7 @@ namespace USB_Wizard
         public MainWindow()
         {
             InitializeComponent();
-            MessageBox.Show("암호화&복호화에 적용될 Password를 입력하여 주십시오.");
+            MessageBox.Show("암호화&복호화에 적용될 Password를 입력sdf하여 주십시ㅇㄹㄴㅇㄹㅇㄴ오.");
             passworddlg dlg = new passworddlg("패스워드를 입력하여 주십시오.");
             dlg.ShowDialog();
             //MessageBox.Show(dlg.txtAnswer.Password);dsdsds
