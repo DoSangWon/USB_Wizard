@@ -21,14 +21,14 @@ namespace USB_Wizard
     /// </summary>
     public partial class MainWindow : Window
     {
-        public static string key; //password
-
+       // public static string key; //password
+        public static string dir;
         public MainWindow()
         {
             InitializeComponent();
-            MessageBox.Show("암호화&복호화에 적용될 Password를 입력sdf하여 주십시ㅇㄹㄴㅇㄹㅇㄴ오.");
+           /* MessageBox.Show("암호화&복호화에 적용될 Password를 입력sdf하여 주십시오.");
             passworddlg dlg = new passworddlg("패스워드를 입력하여 주십시오.");
-            dlg.ShowDialog();
+            dlg.ShowDialog();*/
             //MessageBox.Show(dlg.txtAnswer.Password);dsdsds
             //key = dlg.txtAnswer.Password;
 
@@ -210,7 +210,7 @@ namespace USB_Wizard
                     return;
                 }
                 var list2 = list as MyItem;
-                MessageBox.Show(list2.ID);
+                MessageBox.Show(list2.ID+"를 암호화 합니다.");
 
                 string filename = list2.ID;
 
