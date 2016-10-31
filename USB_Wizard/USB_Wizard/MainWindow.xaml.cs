@@ -9,6 +9,10 @@ using System.Windows.Data;
 using System.Collections.Generic;
 using System.Xml.Linq;
 using System.IO;
+using System.Text;
+using System.Security.Cryptography;
+using System.Collections;
+using System.Security;
 
 namespace USB_Wizard
 {
@@ -17,18 +21,20 @@ namespace USB_Wizard
     /// </summary>
     public partial class MainWindow : Window
     {
-        public static string key; //password
+        //public static string key; //password
+        public static string dir;
+        //public static string filename;
 
-       public MainWindow()
+        public MainWindow()
         {
             InitializeComponent();
             MessageBox.Show("암호화&복호화에 적용될 Password를 입력하여 주십시오.");
             passworddlg dlg = new passworddlg("패스워드를 입력하여 주십시오.");
             dlg.ShowDialog();
-            //string key = dlg.Answer;
+            //MessageBox.Show(dlg.txtAnswer.Password);dsdsds
+            //key = dlg.txtAnswer.Password;
 
-            
-            
+
 
         }
         public class MyItem
@@ -37,7 +43,7 @@ namespace USB_Wizard
             public string ID { get; set; }
 
             public string Name { get; set; }
-           
+
         }
         protected override void OnSourceInitialized(EventArgs e)
         {
@@ -70,7 +76,7 @@ namespace USB_Wizard
                 int devType = Marshal.ReadInt32(lParam, 4);
                 if (devType == DBT_DEVTUP_VOLUME)
                 {
-                
+
                     MessageBox.Show("USB가 제거 되었습니다.");
                     RefreshDevice();
                 }
@@ -83,8 +89,8 @@ namespace USB_Wizard
         /// </summary>
         public void RefreshDevice()
         {
-           lst_ComPort.Items.Clear();
-            listView1.Items.Clear(); 
+            lst_ComPort.Items.Clear();
+            listView1.Items.Clear();
             tName.Content = "";
             tFormat.Content = "";
             tType.Content = "";
@@ -95,11 +101,11 @@ namespace USB_Wizard
                 System.IO.DriveInfo dr = new System.IO.DriveInfo(device);
                 if (dr.DriveType == System.IO.DriveType.Removable) //제거 가능한 타입이라면
                 {
-                   
+
                     lst_ComPort.Items.Add(device);
-                 
-                    
-                  
+
+
+
 
                     // textBox1.AppendText("총 size : " + Convert.ToString(dr.TotalSize) + Environment.NewLine);
                     //textBox1.AppendText("남은 size : " + Convert.ToString(dr.AvailableFreeSpace) + Environment.NewLine);
@@ -110,7 +116,7 @@ namespace USB_Wizard
             }
 
         }
-        private void lst_ComPort_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        public void lst_ComPort_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             int sel = lst_ComPort.SelectedIndex;
 
@@ -137,7 +143,10 @@ namespace USB_Wizard
                         pBarSize.Maximum = dr.TotalSize;
                         pBarSize.Value = dr.AvailableFreeSpace;
 
+                        dir = dr.Name;
+
                         string dirPath = @dr.Name;
+
                         System.IO.DirectoryInfo di = new System.IO.DirectoryInfo(dirPath);
                         String file = "*.*";
                         DirectoryInfo[] CInfo = di.GetDirectories(file, SearchOption.AllDirectories);
@@ -145,16 +154,22 @@ namespace USB_Wizard
                         foreach (DirectoryInfo info in CInfo)
                         {
                             //listView1.Items.Add(info.Name);
-                            
+
                             foreach (var item in info.GetFiles(file, SearchOption.TopDirectoryOnly))
                             {
 
                                 // 파일 이름 출력
 
 
-                                listView1.Items.Add(new MyItem {ID=item.Name, Name=item.FullName});//리스트에 파일명과 Full 경로 출력
+                                listView1.Items.Add(new MyItem { ID = item.Name, Name = item.FullName });//리스트에 파일명과 Full 경로 출력
+
 
                                 // 파일 타입 (확장자) 출력
+
+
+
+
+                                //filename = item.Name;
 
                                 //listBox1.Items.Add(item.Extension);
                                 // 파일 생성날짜 출력
@@ -170,7 +185,7 @@ namespace USB_Wizard
                 }
             }
         }
-        
+
 
 
 
@@ -179,27 +194,281 @@ namespace USB_Wizard
         {
 
         }
-        
-       
+
+
 
         private void btnEncrypt_Click(object sender, RoutedEventArgs e)
         {
-            foreach(var list in listView1.SelectedItems)
+            foreach (var list in listView1.SelectedItems)
             {
-                if(list == null)
+                if (list == null)
                 {
                     return;
                 }
                 var list2 = list as MyItem;
                 MessageBox.Show(list2.ID);
 
-                
+                string filename = list2.ID;
+
+                passworddlg dlg = new passworddlg("패스워드를 입력하여 주십시오.");
+                dlg.ShowDialog();
+
+                Log(filename, "암호화 시작");
+
+                if (dlg.DialogResult == true)
+                {
+
+                    String key = dlg.txtAnswer.Password;
+
+                    string path = @list2.Name;
+                    string enfile = path.Substring(0, path.LastIndexOf("."));
+                    string ext = path.Substring(path.LastIndexOf("."));
+
+                    String str = AES.AESEncrypt256(path, enfile + "(암호화)" + ext, key);
+                    Log(filename, "암호화 성공");
+                    MessageBox.Show("암호화 된 문자열 : " + str);
+                }
+                else
+                {
+                    Log(filename, "암호화 실패");
+                    MessageBox.Show("비밀번호를 입력해 주세요.");
+                }
+
+
             }
         }
 
+
         private void btnDecrypt_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show(key);
+            foreach (var list in listView1.SelectedItems)
+            {
+                if (list == null)
+                {
+                    return;
+                }
+                var list2 = list as MyItem;
+                MessageBox.Show(list2.ID);
+
+                string filename = list2.ID;
+
+                passworddlg dlg = new passworddlg("패스워드를 입력하여 주십시오.");
+                dlg.ShowDialog();
+
+                Log(filename, "복호화 시작");
+
+                if (dlg.DialogResult == true)
+                {
+
+                    String key = dlg.txtAnswer.Password;
+
+                    string path = @list2.Name;
+                    string enfile = path.Substring(0, path.LastIndexOf("."));
+                    string ext = path.Substring(path.LastIndexOf("."));
+
+
+                    String str = AES.AESDecrypt256(enfile + ext, enfile + "(복호화)" + ext, key);
+                    Log(filename, "복호화 성공");
+                    MessageBox.Show("복호화 된 문자열 : " + str);
+
+                }
+                else
+                {
+                    Log(filename, "복호화 실패");
+                    MessageBox.Show("비밀번호를 입력해 주세요.");
+                }
+
+            }
         }
+
+        public class AES
+        {
+            //AES_256 암호화
+            public static String AESEncrypt256(string sInputFilename, string sOutputFilename, String key)
+            {
+                string path = @"F:\7\8.txt";
+                string path2 = @"F:\7\9.txt";
+                FileStream fsInput = new FileStream(sInputFilename,
+               FileMode.Open,
+               FileAccess.Read);
+
+                FileStream fsEncrypted = new FileStream(sOutputFilename,
+                   FileMode.Create,
+                   FileAccess.Write);
+
+                StreamWriter sw = new StreamWriter(fsEncrypted);
+                StreamReader sr = new StreamReader(fsInput);
+                string str = sr.ReadToEnd();
+                MessageBox.Show(key);
+
+                RijndaelManaged aes = new RijndaelManaged();
+                aes.KeySize = 256;
+                aes.BlockSize = 128;
+                aes.Mode = CipherMode.CBC;
+                aes.Padding = PaddingMode.PKCS7;
+                String md5 = CreateMD5(key);
+                aes.Key = Encoding.UTF8.GetBytes(md5);
+                aes.IV = new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+
+                var encrypt = aes.CreateEncryptor(aes.Key, aes.IV);
+                byte[] xBuff = null;
+                using (var ms = new MemoryStream())
+                {
+                    using (var cs = new CryptoStream(ms, encrypt, CryptoStreamMode.Write))
+                    {
+                        byte[] xXml = Encoding.UTF8.GetBytes(str);
+                        cs.Write(xXml, 0, xXml.Length);
+                    }
+
+                    xBuff = ms.ToArray();
+                }
+
+                String Output = Convert.ToBase64String(xBuff);
+                sw.Write(Output);
+
+
+                sw.Close();
+                return Output;
+            }
+
+            public static string CreateMD5(string input)
+            {
+                // Use input string to calculate MD5 hash
+                using (System.Security.Cryptography.MD5 md5 = System.Security.Cryptography.MD5.Create())
+                {
+                    byte[] inputBytes = System.Text.Encoding.ASCII.GetBytes(input);
+                    byte[] hashBytes = md5.ComputeHash(inputBytes);
+
+                    // Convert the byte array to hexadecimal string
+                    StringBuilder sb = new StringBuilder();
+                    for (int i = 0; i < hashBytes.Length; i++)
+                    {
+                        sb.Append(hashBytes[i].ToString("X2"));
+                    }
+                    return sb.ToString();
+                }
+            }
+
+
+            //AES_256 복호화
+            public static String AESDecrypt256(string sInputFilename, string sOutputFilename, String key)
+            {
+                string path = @"F:\7\9.txt";
+                string path2 = @"F:\7\10.txt";
+                FileStream fsInput = new FileStream(sInputFilename,
+               FileMode.Open,
+               FileAccess.Read);
+
+                FileStream fsEncrypted = new FileStream(sOutputFilename,
+                   FileMode.Create,
+                   FileAccess.Write);
+
+                StreamWriter sw = new StreamWriter(fsEncrypted);
+                StreamReader sr = new StreamReader(fsInput);
+                string str = sr.ReadToEnd();
+
+
+                RijndaelManaged aes = new RijndaelManaged();
+                aes.KeySize = 256;
+                aes.BlockSize = 128;
+                aes.Mode = CipherMode.CBC;
+                aes.Padding = PaddingMode.PKCS7;
+                String md5 = CreateMD5(key);
+                aes.Key = Encoding.UTF8.GetBytes(md5);
+                aes.IV = new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+
+                //String md5 = CreateMD5("aaaaa");
+                MessageBox.Show(md5);
+
+                var decrypt = aes.CreateDecryptor();
+                byte[] xBuff = null;
+                using (var ms = new MemoryStream())
+                {
+                    using (var cs = new CryptoStream(ms, decrypt, CryptoStreamMode.Write))
+                    {
+                        byte[] xXml = Convert.FromBase64String(str);
+                        cs.Write(xXml, 0, xXml.Length);
+                    }
+
+                    xBuff = ms.ToArray();
+                }
+
+                String Output = Encoding.UTF8.GetString(xBuff);
+                sw.Write(Output);
+
+
+                sw.Close();
+                return Output;
+            }
+
+        }
+
+        /// 
+
+        /// ms까지 시간을 구하는 함수
+        /// 
+
+        /// 
+        public string GetDateTime()
+        {
+            DateTime NowDate = DateTime.Now;
+            return NowDate.ToString("yyyy-MM-dd HH:mm:ss") + ":" + NowDate.Millisecond.ToString("000");
+        }
+
+
+        /// 
+
+        /// 로그 기록
+        /// 
+
+        /// 로그내용
+        public void Log(string filename, string str)
+        {
+            //string path = @dir;
+            //string enfile = path.Substring(0, path.LastIndexOf(filename));
+            //string ext = path.Substring(path.LastIndexOf("."));
+
+            string FilePath = dir + @"Logs\Log" + DateTime.Today.ToString("yyyyMMdd") + ".log";
+            string DirPath = dir + @"Logs";
+            MessageBox.Show(FilePath);
+            MessageBox.Show(DirPath);
+
+
+            string temp;
+
+            DirectoryInfo di = new DirectoryInfo(DirPath);
+            FileInfo fi = new FileInfo(FilePath);
+
+            try
+            {
+                if (di.Exists != true) Directory.CreateDirectory(DirPath);
+
+                if (fi.Exists != true)
+                {
+                    using (StreamWriter sw = new StreamWriter(FilePath))
+                    {
+                        temp = string.Format("[{0}] : {1}", GetDateTime(), filename + " " + str);
+                        sw.WriteLine(temp);
+                        sw.Close();
+                    }
+                }
+                else
+                {
+                    using (StreamWriter sw = File.AppendText(FilePath))
+                    {
+                        MessageBox.Show("dddd" + filename);
+                        temp = string.Format("[{0}] : {1}", GetDateTime(), filename + " " + str);
+                        sw.WriteLine(temp);
+                        sw.Close();
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.ToString());
+            }
+        }
+
+
     }
 }

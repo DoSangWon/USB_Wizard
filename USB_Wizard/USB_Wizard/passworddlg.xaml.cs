@@ -23,29 +23,40 @@ namespace USB_Wizard
         {
             InitializeComponent();
             lblQuestion.Content = question;
-            
+            //MessageBox.Show(Convert.ToString(lblQuestion.Content));
+
         }
-        private void btnDialogOk_Click(object sender, RoutedEventArgs e)
+        public void btnDialogOk_Click(object sender, RoutedEventArgs e)
         {
             this.DialogResult = true;
+            String str;
+            str = Convert.ToString(txtAnswer.Password);
 
-            
+            MessageBox.Show(str);
+
         }
 
-        private void Window_ContentRendered(object sender, EventArgs e)
+        public void Window_ContentRendered(object sender, EventArgs e)
         {
             txtAnswer.SelectAll();
             txtAnswer.Focus();
+
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        public void Button_Click(object sender, RoutedEventArgs e)
         {
             Close();
         }
-        /*public string Answer
+
+        public void btnDialogCancel_Click(object sender, RoutedEventArgs e)
         {
-            get { return txtAnswer; }
-        }*/
+            this.DialogResult = false;
+            Close();
+        }
+        /*public string Answer
+{
+   get { return txtAnswer; }
+}*/
 
     }
 }
