@@ -116,7 +116,8 @@ namespace USB_Wizard
             }
 
         }
-        public void lst_ComPort_SelectionChanged(object sender, SelectionChangedEventArgs e)
+
+        public void drawListView()
         {
             int sel = lst_ComPort.SelectedIndex;
 
@@ -186,6 +187,11 @@ namespace USB_Wizard
             }
         }
 
+        public void lst_ComPort_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            drawListView();
+        }
+
 
 
 
@@ -227,6 +233,7 @@ namespace USB_Wizard
                     String str = AES.AESEncrypt256(path, enfile + "(암호화)" + ext, key);
                     Log(filename, "암호화 성공");
                     MessageBox.Show("암호화 된 문자열 : " + str);
+
                 }
                 else
                 {
@@ -236,7 +243,8 @@ namespace USB_Wizard
 
 
             }
-        }
+                drawListView();
+            }
 
 
         private void btnDecrypt_Click(object sender, RoutedEventArgs e)
@@ -270,15 +278,16 @@ namespace USB_Wizard
                     String str = AES.AESDecrypt256(enfile + ext, enfile + "(복호화)" + ext, key);
                     Log(filename, "복호화 성공");
                     MessageBox.Show("복호화 된 문자열 : " + str);
-
+                    
                 }
                 else
                 {
                     Log(filename, "복호화 실패");
                     MessageBox.Show("비밀번호를 입력해 주세요.");
                 }
-
+                
             }
+            drawListView();
         }
 
         public class AES
