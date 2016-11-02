@@ -32,7 +32,7 @@ namespace USB_Wizard
             String str;
             str = Convert.ToString(txtAnswer.Password);
 
-            MessageBox.Show(str);
+            //MessageBox.Show(str);
 
         }
 
