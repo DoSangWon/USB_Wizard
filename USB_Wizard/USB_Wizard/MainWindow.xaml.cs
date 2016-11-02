@@ -26,9 +26,6 @@ namespace USB_Wizard
         public MainWindow()
         {
             InitializeComponent();
-            MessageBox.Show("암호화&복호화에 적용될 Password를 입력sdf하여 주십시ㅇㄹㄴㅇㄹㅇㄴ오.");
-            passworddlg dlg = new passworddlg("패스워드를 입력하여 주십시오.");
-            dlg.ShowDialog();
             //MessageBox.Show(dlg.txtAnswer.Password);dsdsds
             //key = dlg.txtAnswer.Password;
 
@@ -228,9 +225,10 @@ namespace USB_Wizard
                     string enfile = path.Substring(0, path.LastIndexOf("."));
                     string ext = path.Substring(path.LastIndexOf("."));
 
-                    String str = AES.AESEncrypt256(path, enfile + "(암호화)" + ext, key);
+                    //String str = AES.AESEncrypt256(path, enfile + "(암호화)" + ext, key);
+                    String str = AES.AESEncrypt256(path, key);
                     Log(filename, "암호화 성공");
-                    MessageBox.Show("암호화가 완료되었습니다.");
+                    MessageBox.Show("암호화 된 문자열 : " + str);
                     //MessageBox.Show("암호화 된 문자열 : " + str);
 
                 }
@@ -277,9 +275,9 @@ namespace USB_Wizard
                     //String str = AES.AESDecrypt256(enfile + ext, enfile + "(복호화)" + ext, key);
                     String str = AES.AESDecrypt256(path, key);
                     Log(filename, "복호화 성공");
-                    MessageBox.Show("복호화가 완료되었습니다.");
+                    MessageBox.Show("복호화 된 문자열 : " + str);
                     //MessageBox.Show("복호화 된 문자열 : " + str);
-                    
+
                 }
                 else
                 {
@@ -296,8 +294,11 @@ namespace USB_Wizard
             //AES_256 암호화
             public static String AESEncrypt256(string sInputFilename, String key)
             {
-                string path = @"F:\7\8.txt";
-                string path2 = @"F:\7\9.txt";
+                string path = sInputFilename;
+                string enfile = path.Substring(0, path.LastIndexOf("."));
+                string ext = path.Substring(path.LastIndexOf("."));
+                string enName = enfile + ext;
+                string sOutputFilename = enfile + "(암호화)" + ext;
                 FileStream fsInput = new FileStream(sInputFilename,
                FileMode.Open,
                FileAccess.Read);
@@ -308,7 +309,8 @@ namespace USB_Wizard
 
                 StreamWriter sw = new StreamWriter(fsEncrypted);
                 StreamReader sr = new StreamReader(fsInput);
-                string str = sr.ReadToEnd();
+                string str = sr.ReadToEnd() + ext;
+                
                 MessageBox.Show(key);
 
                 RijndaelManaged aes = new RijndaelManaged();
@@ -365,8 +367,7 @@ namespace USB_Wizard
             //AES_256 복호화
             public static String AESDecrypt256(string sInputFilename, String key)
             {
-                string path = @"F:\7\9.txt";
-                string path2 = @"F:\7\10.txt";
+                
                 FileStream fsInput = new FileStream(sInputFilename,
                FileMode.Open,
                FileAccess.Read);
