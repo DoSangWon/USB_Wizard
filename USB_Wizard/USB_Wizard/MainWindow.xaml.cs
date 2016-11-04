@@ -13,6 +13,7 @@ using System.Text;
 using System.Security.Cryptography;
 using System.Collections;
 using System.Security;
+using System.ComponentModel;
 
 namespace USB_Wizard
 {
@@ -28,7 +29,6 @@ namespace USB_Wizard
             InitializeComponent();
             //MessageBox.Show(dlg.txtAnswer.Password);dsdsds
             //key = dlg.txtAnswer.Password;
-
 
 
         }
@@ -147,20 +147,41 @@ namespace USB_Wizard
                         String file = "*.*";
                         DirectoryInfo[] CInfo = di.GetDirectories(file, SearchOption.AllDirectories);
                         listView1.Items.Clear();
+                        foreach(var items in di.GetFiles(file, SearchOption.TopDirectoryOnly))
+                        {
+                            listView1.Items.Add(new MyItem { ID = items.Name, Name = items.FullName });//리스트에 파일명과 Full 경로 출력
+                        }
                         foreach (DirectoryInfo info in CInfo)
                         {
                             //listView1.Items.Add(info.Name);
-
+                            
                             foreach (var item in info.GetFiles(file, SearchOption.TopDirectoryOnly))
                             {
 
                                 // 파일 이름 출력
 
+                                
+                                
+                                listView1.Items.Add(new MyItem { ID = item.Name, Name = item.FullName });
 
-                                listView1.Items.Add(new MyItem { ID = item.Name, Name = item.FullName });//리스트에 파일명과 Full 경로 출력
+                                listView1.Items.SortDescriptions.Add(new SortDescription("ID", ListSortDirection.Ascending));
+                                listView1.Items.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
+                                //리스트에 파일명과 Full 경로 출력                                                                   
+                                //listView1.ItemsSource = item;
+                                /*List<MyItem> items = new List<MyItem>();
+                                  items.Add(new MyItem() { ID = item.Name, Name = item.FullName });
 
+                                  listView1.ItemsSource = items;
 
+                                  CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(listView1.ItemsSource);
+                                  view.SortDescriptions.Add(new SortDescription("ID", ListSortDirection.Ascending));
+                                */
                                 // 파일 타입 (확장자) 출력
+
+                                //Sort("ID", ListSortDirection.Ascending, items1);
+
+
+
 
 
 
@@ -176,8 +197,9 @@ namespace USB_Wizard
                                 //listBox1.Items.Add(item.Directory);
                             }
                         }
+                        
                     }
-
+                    
                 }
             }
         }
@@ -298,7 +320,7 @@ namespace USB_Wizard
                 string enfile = path.Substring(0, path.LastIndexOf("."));
                 string ext = path.Substring(path.LastIndexOf("."));
                 string enName = enfile + ext;
-                string sOutputFilename = enfile + "(암호화)" + ext;
+                string sOutputFilename = enfile + ".Crypto";
                 FileStream fsInput = new FileStream(sInputFilename,
                FileMode.Open,
                FileAccess.Read);
@@ -318,7 +340,9 @@ namespace USB_Wizard
                 aes.BlockSize = 128;
                 aes.Mode = CipherMode.CBC;
                 aes.Padding = PaddingMode.PKCS7;
-                String md5 = CreateMD5(key);
+                string sha = SHA256Hash(key);
+                String md5 = CreateMD5(sha);
+                MessageBox.Show("해시값은 " + str);
                 aes.Key = Encoding.UTF8.GetBytes(md5);
                 aes.IV = new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
@@ -384,7 +408,11 @@ namespace USB_Wizard
                 aes.BlockSize = 128;
                 aes.Mode = CipherMode.CBC;
                 aes.Padding = PaddingMode.PKCS7;
-                String md5 = CreateMD5(key); //MD5 해시화
+                //String md5 = CreateMD5(key); //MD5 해시화
+                //aes.Key = Encoding.UTF8.GetBytes(md5);
+                string sha = SHA256Hash(key);
+                String md5 = CreateMD5(sha);
+                MessageBox.Show("해시값은 " + str);
                 aes.Key = Encoding.UTF8.GetBytes(md5);
                 aes.IV = new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
@@ -413,7 +441,7 @@ namespace USB_Wizard
                 MessageBox.Show("파일명" +enfile);
                 string ext = Output.Substring(Output.LastIndexOf("."));
                 MessageBox.Show("확장자" +ext);
-                string enName = enfile+"(복호화)" + ext;
+                string enName = enfile + ext;
                 string sOutputFilename = enName;
                 string content = Output.Substring(0, Output.LastIndexOf(ext));
 
@@ -428,7 +456,7 @@ namespace USB_Wizard
 
                 sw.Close();
                 sr.Close();
-                //File.Delete(sInputFilename);
+                File.Delete(sInputFilename);
                 return Output;
             }
 
@@ -500,6 +528,83 @@ namespace USB_Wizard
             }
         }
 
+
+        public static string SHA256Hash(string Data)
+        {
+            SHA256 sha = new SHA256Managed();
+            byte[] hash = sha.ComputeHash(Encoding.ASCII.GetBytes(Data));
+            StringBuilder stringBuilder = new StringBuilder();
+            foreach (byte b in hash)
+            {
+                stringBuilder.AppendFormat("{0:x2}", b);
+            }
+            return stringBuilder.ToString();
+        }
+
+
+        public static void Sort(string PropertyName, ListSortDirection Direction, object ItemsSource)
+        {
+            // ItemsSource의 Default 뷰 가져오기
+            ICollectionView CollectionView = CollectionViewSource.GetDefaultView(ItemsSource);
+
+            // 기존에 등록되어 있던 SortDescriptions제거
+            CollectionView.SortDescriptions.Clear();
+
+            // SortDescription 추가
+            SortDescription SortDescription = new SortDescription(PropertyName, Direction);
+            CollectionView.SortDescriptions.Add(SortDescription);
+
+            // 뷰 갱신
+            CollectionView.Refresh();
+        }
+
+        GridViewColumnHeader _lastHeaderClicked = null;
+        ListSortDirection _lastDirection = ListSortDirection.Ascending;
+
+        void GridViewColumnHeaderClickedHandler(object sender, RoutedEventArgs e)
+        {
+            GridViewColumnHeader headerClicked = e.OriginalSource as GridViewColumnHeader;
+            ListSortDirection direction;
+
+            if (headerClicked != null)
+            {
+                if (headerClicked.Role != GridViewColumnHeaderRole.Padding)
+                {
+                    if (headerClicked != _lastHeaderClicked)
+                    {
+                        direction = ListSortDirection.Ascending;
+                    }
+                    else
+                    {
+                        if (_lastDirection == ListSortDirection.Ascending)
+                        {
+                            direction = ListSortDirection.Descending;
+                        }
+                        else
+                        {
+                            direction = ListSortDirection.Ascending;
+                        }
+                    }
+
+                    string header = headerClicked.Column.Header as string;
+                    Sort2(header, direction);
+
+                    _lastHeaderClicked = headerClicked;
+                    _lastDirection = direction;
+                }
+            }
+        }
+
+        private void Sort2(string sortBy, ListSortDirection direction)
+        {
+            ICollectionView dataView =
+              CollectionViewSource.GetDefaultView(listView1.ItemsSource);
+
+            dataView.SortDescriptions.Clear();
+            SortDescription sd = new SortDescription(sortBy, direction);
+            dataView.SortDescriptions.Add(sd);
+            dataView.Refresh();
+        }
 
     }
 }
