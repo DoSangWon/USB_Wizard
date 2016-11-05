@@ -137,7 +137,8 @@ namespace USB_Wizard
                         tFormat.Content = dr.DriveFormat + Environment.NewLine;
                         tType.Content = dr.DriveType + Environment.NewLine;
                         pBarSize.Maximum = dr.TotalSize;
-                        pBarSize.Value = dr.AvailableFreeSpace;
+                        //pBarSize.Minimum = 0;
+                        pBarSize.Value = dr.TotalSize - dr.AvailableFreeSpace;
 
                         dir = dr.Name;
 
@@ -212,11 +213,6 @@ namespace USB_Wizard
 
 
 
-
-        private void pBarSize_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-
-        }
 
 
 
@@ -331,7 +327,7 @@ namespace USB_Wizard
 
                 StreamWriter sw = new StreamWriter(fsEncrypted);
                 StreamReader sr = new StreamReader(fsInput);
-                string str = sr.ReadToEnd() + ext;
+                var str = sr.ReadToEnd() + ext;
                 
                 MessageBox.Show(key);
 
