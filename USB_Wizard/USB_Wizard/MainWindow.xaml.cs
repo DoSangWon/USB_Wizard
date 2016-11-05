@@ -137,7 +137,9 @@ namespace USB_Wizard
                         tFormat.Content = dr.DriveFormat + Environment.NewLine;
                         tType.Content = dr.DriveType + Environment.NewLine;
                         pBarSize.Maximum = dr.TotalSize;
-                        pBarSize.Value = dr.AvailableFreeSpace;
+                        pBarSize.Value = dr.TotalSize - dr.AvailableFreeSpace;
+                        
+                        MessageBox.Show(Convert.ToString(pBarSize.Value));
 
                         dir = dr.Name;
 
