@@ -16,7 +16,7 @@
                 </GroupBox.Header>
                 <ComboBox x:Name="lst_ComPort" HorizontalAlignment="Left" VerticalAlignment="Top" Width="132" Height="20" Margin="10,10,0,0" SelectionChanged="lst_ComPort_SelectionChanged"/>
             </GroupBox>
-            <Label x:Name="About" Content="ver 1.2.0  Made By STB" FontSize="10" Foreground="White" HorizontalAlignment="Left" Height="23" Margin="708,50,0,0" VerticalAlignment="Top" Width="140"/>
+            <Label x:Name="About" Content="ver 1.2.5  Made By STB" FontSize="10" Foreground="White" HorizontalAlignment="Left" Height="23" Margin="708,50,0,0" VerticalAlignment="Top" Width="140"/>
             <GroupBox Margin="616,203,14,-449" FontSize="10" Foreground="#FFFDF9F9">
                 <GroupBox.Header>USB Info</GroupBox.Header>
                 <ProgressBar x:Name="pBarSize" HorizontalAlignment="Left" Height="21" Margin="10,139,0,0" VerticalAlignment="Top" Width="188" />
