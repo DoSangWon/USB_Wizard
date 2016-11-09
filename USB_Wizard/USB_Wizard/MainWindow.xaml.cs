@@ -26,6 +26,13 @@ namespace USB_Wizard
         public static string dir;
         static byte[] xBuff = null;
         static byte[] xBuff2 = null;
+
+        static public byte[] StringToByte(string str)
+        {
+            byte[] StrByte = Encoding.UTF8.GetBytes(str);
+            return StrByte;
+        }
+
         public MainWindow()
         {
             InitializeComponent();
@@ -342,6 +349,9 @@ namespace USB_Wizard
 
                     var encrypt = aes.CreateEncryptor(aes.Key, aes.IV);
                     xBuff = null;
+                    
+                   
+                    
                     using (var ms = new MemoryStream())
                     {
                         using (var cs = new CryptoStream(ms, encrypt, CryptoStreamMode.Write))
@@ -360,8 +370,9 @@ namespace USB_Wizard
                 // Write to file ...
                 using (FileStream fs = new FileStream(sInputFilename, FileMode.Create))
                 {
-
+                    string ext = ".txt";
                     fs.Write(xBuff, 0, xBuff.Length);
+                    fs.Write(StringToByte(ext), 0, StringToByte(ext).Length);
 
                 }
 
