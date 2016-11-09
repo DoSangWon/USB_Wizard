@@ -24,6 +24,8 @@ namespace USB_Wizard
     {
        // public static string key; //password
         public static string dir;
+        static byte[] xBuff = null;
+        static byte[] xBuff2 = null;
         public MainWindow()
         {
             InitializeComponent();
@@ -318,57 +320,55 @@ namespace USB_Wizard
             //AES_256 암호화
             public static String AESEncrypt256(string sInputFilename, String key)
             {
-                string path = sInputFilename;
-                string enfile = path.Substring(0, path.LastIndexOf("."));
-                string ext = path.Substring(path.LastIndexOf("."));
-                string enName = enfile + ext;
-                string sOutputFilename = enfile + ".Crypto";
-                FileStream fsInput = new FileStream(sInputFilename,
-               FileMode.Open,
-               FileAccess.Read);
-
-                FileStream fsEncrypted = new FileStream(sOutputFilename,
-                   FileMode.Create,
-                   FileAccess.Write);
-
-                StreamWriter sw = new StreamWriter(fsEncrypted);
-                StreamReader sr = new StreamReader(fsInput);
-                string str = sr.ReadToEnd() + ext;
-                
-                MessageBox.Show(key);
-
-                RijndaelManaged aes = new RijndaelManaged();
-                aes.KeySize = 256;
-                aes.BlockSize = 128;
-                aes.Mode = CipherMode.CBC;
-                aes.Padding = PaddingMode.PKCS7;
-                string sha = SHA256Hash(key);
-                String md5 = CreateMD5(sha);
-                MessageBox.Show("해시값은 " + str);
-                aes.Key = Encoding.UTF8.GetBytes(md5);
-                aes.IV = new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-
-                var encrypt = aes.CreateEncryptor(aes.Key, aes.IV);
-                byte[] xBuff = null;
-                using (var ms = new MemoryStream())
+                byte[] b = null;
+                using (FileStream f = new FileStream(sInputFilename, FileMode.Open, FileAccess.Read))
                 {
-                    using (var cs = new CryptoStream(ms, encrypt, CryptoStreamMode.Write))
+                    b = new byte[f.Length];
+
+                    f.Read(b, 0, b.Length);
+                    //StreamReader sr = new StreamReader(f);
+                    //string str = sr.ReadToEnd();
+                    RijndaelManaged aes = new RijndaelManaged();
+                    aes.KeySize = 256;
+                    aes.BlockSize = 128;
+                    aes.Mode = CipherMode.CBC;
+                    aes.Padding = PaddingMode.PKCS7;
+                    string sha = SHA256Hash(key);
+                    String md5 = CreateMD5(sha);
+                    //MessageBox.Show(str);
+                    //MessageBox.Show("해시값은 " + str);
+                    aes.Key = Encoding.UTF8.GetBytes(md5);
+                    aes.IV = new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+
+                    var encrypt = aes.CreateEncryptor(aes.Key, aes.IV);
+                    xBuff = null;
+                    using (var ms = new MemoryStream())
                     {
-                        byte[] xXml = Encoding.UTF8.GetBytes(str);
-                        cs.Write(xXml, 0, xXml.Length);
+                        using (var cs = new CryptoStream(ms, encrypt, CryptoStreamMode.Write))
+                        {
+                            byte[] xXml = b;
+                            cs.Write(xXml, 0, xXml.Length);
+                        }
+
+                        xBuff = ms.ToArray();
                     }
 
-                    xBuff = ms.ToArray();
+                    //Output = Convert.ToBase64String(xBuff);
+                    //b = StringToByte(str);
                 }
 
-                String Output = Convert.ToBase64String(xBuff);
-                sw.Write(Output);
-                
+                // Write to file ...
+                using (FileStream fs = new FileStream(sInputFilename, FileMode.Create))
+                {
 
-                sw.Close();
-                sr.Close();
-                File.Delete(sInputFilename);
-                return Output;
+                    fs.Write(xBuff, 0, xBuff.Length);
+
+                }
+
+                return "dd";
+
+
+
             }
 
             public static string CreateMD5(string input)
@@ -393,73 +393,59 @@ namespace USB_Wizard
             //AES_256 복호화
             public static String AESDecrypt256(string sInputFilename, String key)
             {
-                
-                FileStream fsInput = new FileStream(sInputFilename,
-               FileMode.Open,
-               FileAccess.Read);
-
-                
-
-                
-                StreamReader sr = new StreamReader(fsInput);
-                string str = sr.ReadToEnd();
 
 
-                RijndaelManaged aes = new RijndaelManaged();
-                aes.KeySize = 256;
-                aes.BlockSize = 128;
-                aes.Mode = CipherMode.CBC;
-                aes.Padding = PaddingMode.PKCS7;
-                //String md5 = CreateMD5(key); //MD5 해시화
-                //aes.Key = Encoding.UTF8.GetBytes(md5);
-                string sha = SHA256Hash(key);
-                String md5 = CreateMD5(sha);
-                MessageBox.Show("해시값은 " + str);
-                aes.Key = Encoding.UTF8.GetBytes(md5);
-                aes.IV = new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-
-                //String md5 = CreateMD5("aaaaa");
-               // MessageBox.Show(md5);
-
-                var decrypt = aes.CreateDecryptor();
-                byte[] xBuff = null;
-                using (var ms = new MemoryStream())
+                byte[] c = null;
+                using (FileStream f = new FileStream(sInputFilename, FileMode.Open))
                 {
-                    using (var cs = new CryptoStream(ms, decrypt, CryptoStreamMode.Write))
+                    c = new byte[f.Length];
+                    //StreamReader sr = new StreamReader(f);
+                    //string str = sr.ReadToEnd();
+                    f.Read(c, 0, c.Length);
+
+                    RijndaelManaged aes = new RijndaelManaged();
+                    aes.KeySize = 256;
+                    aes.BlockSize = 128;
+                    aes.Mode = CipherMode.CBC;
+                    aes.Padding = PaddingMode.PKCS7;
+                    //String md5 = CreateMD5(key); //MD5 해시화
+                    //aes.Key = Encoding.UTF8.GetBytes(md5);
+                    string sha = SHA256Hash(key);
+                    String md5 = CreateMD5(sha);
+                    //MessageBox.Show("해시값은 " + str);
+                    aes.Key = Encoding.UTF8.GetBytes(md5);
+                    aes.IV = new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+
+                    //String md5 = CreateMD5("aaaaa");
+                    // MessageBox.Show(md5);
+
+                    var decrypt = aes.CreateDecryptor();
+                    xBuff2 = null;
+                    using (var ms2 = new MemoryStream())
                     {
-                        byte[] xXml = Convert.FromBase64String(str);
-                        cs.Write(xXml, 0, xXml.Length);
+                        using (var cs2 = new CryptoStream(ms2, decrypt, CryptoStreamMode.Write))
+                        {
+                            byte[] xXml2 = c;
+                            cs2.Write(xXml2, 0, xXml2.Length);
+                        }
+
+                        xBuff2 = ms2.ToArray();
                     }
 
-                    xBuff = ms.ToArray();
+                    //String Output = Encoding.UTF8.GetString(xBuff);
+                    //b = StringToByte(Output);
                 }
 
-                String Output = Encoding.UTF8.GetString(xBuff);
+                // Write to file ...
+                using (FileStream fs = new FileStream(sInputFilename, FileMode.Create))
+                {
+                    fs.Write(xBuff2, 0, xBuff2.Length);
+
+                }
+
+                return "dd";
 
 
-                string path = sInputFilename;
-                
-                string enfile = path.Substring(0, path.LastIndexOf("."));
-                MessageBox.Show("파일명" +enfile);
-                string ext = Output.Substring(Output.LastIndexOf("."));
-                MessageBox.Show("확장자" +ext);
-                string enName = enfile + ext;
-                string sOutputFilename = enName;
-                string content = Output.Substring(0, Output.LastIndexOf(ext));
-
-                FileStream fsEncrypted = new FileStream(sOutputFilename,
-                   FileMode.Create,
-                   FileAccess.Write);
-
-                StreamWriter sw = new StreamWriter(fsEncrypted);
-
-                sw.Write(content);
-
-
-                sw.Close();
-                sr.Close();
-                File.Delete(sInputFilename);
-                return Output;
             }
 
         }
