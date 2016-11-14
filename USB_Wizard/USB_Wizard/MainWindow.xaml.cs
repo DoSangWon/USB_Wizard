@@ -33,6 +33,12 @@ namespace USB_Wizard
             return StrByte;
         }
 
+        static public string ByteToString(byte[] strByte)
+        {
+            string str = Encoding.Default.GetString(strByte);
+            return str;
+        }
+
         public MainWindow()
         {
             InitializeComponent();
@@ -328,11 +334,15 @@ namespace USB_Wizard
             public static String AESEncrypt256(string sInputFilename, String key)
             {
                 byte[] b = null;
+                string ext = sInputFilename.Substring(sInputFilename.LastIndexOf("."));
+                int a = ext.Length;
+                ext = a.ToString() + ext;
                 using (FileStream f = new FileStream(sInputFilename, FileMode.Open, FileAccess.Read))
                 {
                     b = new byte[f.Length];
 
                     f.Read(b, 0, b.Length);
+                    
                     //StreamReader sr = new StreamReader(f);
                     //string str = sr.ReadToEnd();
                     RijndaelManaged aes = new RijndaelManaged();
@@ -349,15 +359,16 @@ namespace USB_Wizard
 
                     var encrypt = aes.CreateEncryptor(aes.Key, aes.IV);
                     xBuff = null;
-                    
-                   
-                    
+
+
                     using (var ms = new MemoryStream())
                     {
                         using (var cs = new CryptoStream(ms, encrypt, CryptoStreamMode.Write))
                         {
                             byte[] xXml = b;
+                            //cs.Write(StringToByte(ext), 0, StringToByte(ext).Length);
                             cs.Write(xXml, 0, xXml.Length);
+                            
                         }
 
                         xBuff = ms.ToArray();
@@ -366,14 +377,14 @@ namespace USB_Wizard
                     //Output = Convert.ToBase64String(xBuff);
                     //b = StringToByte(str);
                 }
-                
+
                 // Write to file ...
                 using (FileStream fs = new FileStream(sInputFilename+".Crypto", FileMode.Create))
                 {
                     //string ext = ".txt";
                     fs.Write(xBuff, 0, xBuff.Length);
                     //fs.Write(StringToByte(ext), 0, StringToByte(ext).Length);
-                    
+
                 }
                 File.Delete(sInputFilename);
                 return "dd";
@@ -404,14 +415,11 @@ namespace USB_Wizard
             //AES_256 복호화
             public static String AESDecrypt256(string sInputFilename, String key)
             {
-
                 string enfile = sInputFilename.Substring(0, sInputFilename.LastIndexOf("."));
-                //string ext = sInputFilename.Substring(sInputFilename.LastIndexOf("."));
 
                 byte[] c = null;
                 using (FileStream f = new FileStream(sInputFilename, FileMode.Open))
                 {
-
                     c = new byte[f.Length];
                     //StreamReader sr = new StreamReader(f);
                     //string str = sr.ReadToEnd();
@@ -441,11 +449,13 @@ namespace USB_Wizard
                         {
                             byte[] xXml2 = c;
                             cs2.Write(xXml2, 0, xXml2.Length);
+                            
                         }
 
                         xBuff2 = ms2.ToArray();
+                        
                     }
-
+                    
                     //String Output = Encoding.UTF8.GetString(xBuff);
                     //b = StringToByte(Output);
                 }
@@ -453,8 +463,14 @@ namespace USB_Wizard
                 // Write to file ...
                 using (FileStream fs = new FileStream(enfile, FileMode.Create))
                 {
-
+                    //string a = ByteToString(xBuff2);
+                    //string ext = a.Substring(a.LastIndexOf("."));
+                    //MessageBox.Show("확장자 확인 :"+ext);
+                    
+ 
                     fs.Write(xBuff2, 0, xBuff2.Length);
+                    
+                    
 
                 }
                 File.Delete(sInputFilename);
