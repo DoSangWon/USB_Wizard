@@ -366,16 +366,16 @@ namespace USB_Wizard
                     //Output = Convert.ToBase64String(xBuff);
                     //b = StringToByte(str);
                 }
-
+                
                 // Write to file ...
-                using (FileStream fs = new FileStream(sInputFilename, FileMode.Create))
+                using (FileStream fs = new FileStream(sInputFilename+".Crypto", FileMode.Create))
                 {
-                    string ext = ".txt";
+                    //string ext = ".txt";
                     fs.Write(xBuff, 0, xBuff.Length);
-                    fs.Write(StringToByte(ext), 0, StringToByte(ext).Length);
-
+                    //fs.Write(StringToByte(ext), 0, StringToByte(ext).Length);
+                    
                 }
-
+                File.Delete(sInputFilename);
                 return "dd";
 
 
@@ -405,10 +405,13 @@ namespace USB_Wizard
             public static String AESDecrypt256(string sInputFilename, String key)
             {
 
+                string enfile = sInputFilename.Substring(0, sInputFilename.LastIndexOf("."));
+                //string ext = sInputFilename.Substring(sInputFilename.LastIndexOf("."));
 
                 byte[] c = null;
                 using (FileStream f = new FileStream(sInputFilename, FileMode.Open))
                 {
+
                     c = new byte[f.Length];
                     //StreamReader sr = new StreamReader(f);
                     //string str = sr.ReadToEnd();
@@ -448,12 +451,13 @@ namespace USB_Wizard
                 }
 
                 // Write to file ...
-                using (FileStream fs = new FileStream(sInputFilename, FileMode.Create))
+                using (FileStream fs = new FileStream(enfile, FileMode.Create))
                 {
+
                     fs.Write(xBuff2, 0, xBuff2.Length);
 
                 }
-
+                File.Delete(sInputFilename);
                 return "dd";
 
 
